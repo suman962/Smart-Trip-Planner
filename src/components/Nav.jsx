@@ -1,7 +1,7 @@
 import {Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenuToggle, NavbarMenu, NavbarMenuItem, Link, Button} from "@heroui/react"
 import { useState } from "react"
 
-const Nav = () => {
+const Nav = ({ className = "" }) => { 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const menuItems = [
@@ -12,8 +12,17 @@ const Nav = () => {
     "Sign Up"
   ];
 
+  const navBarClass = (
+    className.includes('bg-') ? className
+      : `bg-white/10 backdrop-blur-md ${className} text-white`   
+  ) + ` shadow-sm`;
+  
   return (
-    <Navbar onMenuOpenChange={setIsMenuOpen} isBordered className="text-white bg-white/10 backdrop-blur-md shadow-sm">
+    <Navbar 
+        onMenuOpenChange={setIsMenuOpen} 
+        isBordered
+        className={navBarClass}
+      >
       <NavbarContent>
         <NavbarMenuToggle
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
@@ -27,17 +36,17 @@ const Nav = () => {
 
       <NavbarContent className="hidden sm:flex gap-6" justify="center">
         <NavbarItem>
-          <Link color="foreground" href="#" className="text-white">
+          <Link color="foreground" href="#" className="text-inherit">
             Home
           </Link>
         </NavbarItem>
         <NavbarItem isActive>
-          <Link aria-current="page" href="#" className="text-white">
+          <Link aria-current="page" href="#" className="text-inherit">
             Search
           </Link>
         </NavbarItem>
         <NavbarItem>
-          <Link color="foreground" href="#" className="text-white">
+          <Link color="foreground" href="#" className="text-inherit">
             Trips
           </Link>
         </NavbarItem>
@@ -45,7 +54,7 @@ const Nav = () => {
 
       <NavbarContent justify="end" className="hidden sm:flex">
         <NavbarItem>
-          <Link href="#" className="text-white">Login</Link>
+          <Link href="/login" className="text-inherit">Login</Link>
         </NavbarItem>
         <NavbarItem>
           <Button as={Link} color="primary" href="#" variant="flat" className="text-white bg-sky-700">
