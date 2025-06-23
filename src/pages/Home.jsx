@@ -6,7 +6,7 @@ function Home() {
   return (
     <div 
       className="min-h-screen bg-cover bg-center bg-no-repeat bg-fixed"
-      style={{ backgroundImage: "url('./assets/home.jpg')" }}
+      style={{ backgroundImage: "url('./assets/home.png')" }}
     >
       <Nav />
       <section className="h-80dvh flex items-center justify-center 

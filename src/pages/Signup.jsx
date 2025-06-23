@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase';
 import Nav from '../components/nav';
+import { LoginOverlayClouds, LoginOverlayAirplane } from '../components/loginOverlay';
 
 
 const Signup = () => {
@@ -29,8 +30,11 @@ const Signup = () => {
   return (
     <div className="min-h-screen bg-cyan-200 flex flex-col">
       <Nav className="bg-white" currentPage='Sign Up'/>
+      <LoginOverlayClouds />
+      
       <div className="flex-1 flex items-center justify-center">
-        <div className='bg-amber-50 rounded-lg p-10 shadow-lg'>
+        <div className='bg-amber-50 rounded-lg p-10 shadow-lg relative'>
+          <LoginOverlayAirplane />
           <h1 className='text-3xl font-bold text-gray-400 mb-4 text-center'>Sign Up</h1>
           <form onSubmit={handleSignup}>
             <div>
