@@ -36,7 +36,7 @@ const Nav = ({ className = "" }) => {
 
       <NavbarContent className="hidden sm:flex gap-6" justify="center">
         <NavbarItem>
-          <Link color="foreground" href="#" className="text-inherit">
+          <Link color="foreground" href="/" className="text-inherit">
             Home
           </Link>
         </NavbarItem>
@@ -57,7 +57,7 @@ const Nav = ({ className = "" }) => {
           <Link href="/login" className="text-inherit">Login</Link>
         </NavbarItem>
         <NavbarItem>
-          <Button as={Link} color="primary" href="#" variant="flat" className="text-white bg-sky-700">
+          <Button as={Link} color="primary" href="/signup" variant="flat" className="text-white bg-sky-700">
             Sign Up
           </Button>
         </NavbarItem>
@@ -71,7 +71,13 @@ const Nav = ({ className = "" }) => {
                 index === 2 ? "primary" : index === menuItems.length - 1 ? "danger" : "foreground"
               }
               className="w-full text-white"
-              href="#"
+              href={
+                item === "Home" ? "/" :
+                item === "Search" ? "/search" :
+                item === "Trips" ? "/trips" :
+                item === "Login" ? "/login" :
+                item === "Sign Up" ? "/signup" : "#"
+              }
               size="lg"
             >
               {item}

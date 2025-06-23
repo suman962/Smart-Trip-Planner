@@ -1,19 +1,26 @@
 import { useState } from 'react';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase';
 import Nav from '../components/nav';
 
 
-const Login = () => {
+const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleLogin = async (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
+    
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+    
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      alert('Login Successful!');
+      await createUserWithEmailAndPassword(auth, email, password);
+      alert('Signup Successful!');
     } catch (err) {
       setError(err.message);
     }
@@ -24,8 +31,8 @@ const Login = () => {
       <Nav className="bg-white" />
       <div className="flex-1 flex items-center justify-center">
         <div className='bg-amber-50 rounded-lg p-10 shadow-lg'>
-          <h1 className='text-3xl font-bold text-gray-400 mb-4 text-center'>Login</h1>
-          <form onSubmit={handleLogin}>
+          <h1 className='text-3xl font-bold text-gray-400 mb-4 text-center'>Sign Up</h1>
+          <form onSubmit={handleSignup}>
             <div>
               <div className=''>
                 {error && <p className="error text-sm text-red-400 -mt-3 text-center">{error}</p>}
@@ -52,10 +59,21 @@ const Login = () => {
                     className='border border-gray-300 rounded-lg p-2 w-full'
                   />
                 </div>
+
+                <div>
+                  <label htmlFor="confirmPassword" className="block font-medium mb-1">Confirm Password</label>
+                  <input
+                    type="password"
+                    id="confirmPassword"
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
+                    className='border border-gray-300 rounded-lg p-2 w-full'
+                  />
+                </div>
               </div>
               <div className='mt-4 text-center'>
                 <button type="submit" className="bg-cyan-500 text-white px-4 py-2 rounded-lg">
-                  Login
+                  Sign Up
                 </button>
               </div>
             </div>
@@ -66,4 +84,4 @@ const Login = () => {
   )
 }
 
-export default Login;
+export default Signup;
