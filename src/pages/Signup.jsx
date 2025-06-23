@@ -28,7 +28,7 @@ const Signup = () => {
 
   return (
     <div className="min-h-screen bg-cyan-200 flex flex-col">
-      <Nav className="bg-white" />
+      <Nav className="bg-white" currentPage='Sign Up'/>
       <div className="flex-1 flex items-center justify-center">
         <div className='bg-amber-50 rounded-lg p-10 shadow-lg'>
           <h1 className='text-3xl font-bold text-gray-400 mb-4 text-center'>Sign Up</h1>

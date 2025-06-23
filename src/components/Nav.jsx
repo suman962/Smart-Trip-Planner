@@ -1,27 +1,35 @@
-import {Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenuToggle, NavbarMenu, NavbarMenuItem, Link, Button} from "@heroui/react"
-import { useState } from "react"
+import {Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenuToggle, NavbarMenu, NavbarMenuItem, Link, Button} from "@heroui/react";
+import { useState } from "react";
 
-const Nav = ({ className = "" }) => { 
+const Nav = ({ className = "", currentPage = "Home" }) => { 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const menuItems = [
-    "Home",
-    "Search", 
-    "Trips",
-    "Login",
-    "Sign Up"
+    { name: "Home", href: "/" },
+    { name: "Search", href: "/search" },
+    { name: "Trips", href: "/trips" },
+    { name: "Login", href: "/login" },
+    { name: "Sign Up", href: "/signup" }
   ];
 
   const navBarClass = (
     className.includes('bg-') ? className
       : `bg-white/10 backdrop-blur-md ${className} text-white`   
   ) + ` shadow-sm`;
+
+  const getNavItemProps = (item) => ({
+    color: currentPage === item.name ? "primary" : "foreground",
+    className: `text-inherit ${currentPage === item.name ? "font-semibold text-sky-400" : ""}`
+  });
   
   return (
     <Navbar 
         onMenuOpenChange={setIsMenuOpen} 
         isBordered
         className={navBarClass}
+        classNames={{
+          menu: "bg-white/10 backdrop-blur-md"
+        }}
       >
       <NavbarContent>
         <NavbarMenuToggle
@@ -35,52 +43,40 @@ const Nav = ({ className = "" }) => {
       </NavbarContent>
 
       <NavbarContent className="hidden sm:flex gap-6" justify="center">
-        <NavbarItem>
-          <Link color="foreground" href="/" className="text-inherit">
-            Home
-          </Link>
-        </NavbarItem>
-        <NavbarItem isActive>
-          <Link aria-current="page" href="#" className="text-inherit">
-            Search
-          </Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Link color="foreground" href="#" className="text-inherit">
-            Trips
-          </Link>
-        </NavbarItem>
+        {menuItems.slice(0, 3).map((item) => (
+          <NavbarItem key={item.name}>
+            <Link href={item.href} {...getNavItemProps(item)}>
+              {item.name}
+            </Link>
+          </NavbarItem>
+        ))}
       </NavbarContent>
 
       <NavbarContent justify="end" className="hidden sm:flex">
         <NavbarItem>
-          <Link href="/login" className="text-inherit">Login</Link>
+          <Link href="/login" className={`text-inherit ${currentPage === "Login" ? "font-semibold text-sky-400" : ""}`}>
+            Login
+          </Link>
         </NavbarItem>
         <NavbarItem>
-          <Button as={Link} color="primary" href="/signup" variant="flat" className="text-white bg-sky-700">
+          <Button as={Link} color="primary" href="/signup" variant="flat" 
+            className={`${currentPage === "Sign Up" ? "text-black bg-inherit border-3 border-sky-700" : "text-white bg-sky-700"}`}
+          >
             Sign Up
           </Button>
         </NavbarItem>
       </NavbarContent>
 
       <NavbarMenu>
-        {menuItems.map((item, index) => (
-          <NavbarMenuItem key={`${item}-${index}`}>
+        {menuItems.map((item) => (
+          <NavbarMenuItem key={item.name}>
             <Link
-              color={
-                index === 2 ? "primary" : index === menuItems.length - 1 ? "danger" : "foreground"
-              }
-              className="w-full text-white"
-              href={
-                item === "Home" ? "/" :
-                item === "Search" ? "/search" :
-                item === "Trips" ? "/trips" :
-                item === "Login" ? "/login" :
-                item === "Sign Up" ? "/signup" : "#"
-              }
+              color={currentPage === item.name ? "primary" : "foreground"}
+              className={`w-full text-white ${currentPage === item.name ? "font-semibold text-sky-400" : ""}`}
+              href={item.href}
               size="lg"
             >
-              {item}
+              {item.name}
             </Link>
           </NavbarMenuItem>
         ))}
