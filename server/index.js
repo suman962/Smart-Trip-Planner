@@ -6,7 +6,7 @@ const PORT = 3400;
 app.use(express.json());
 
 app.get('/', async (req, res) => {
-  res.send('Test');
+  res.send('Test || Working');
 });
 
 apis = require('./routes/apis');
@@ -16,5 +16,5 @@ app.use(
 );
 
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`Server is now running on port ${PORT}`);
 });

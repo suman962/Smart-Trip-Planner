@@ -1,15 +1,15 @@
 const express = require("express");
-const router = express.Router();
 const axios = require("axios");
 const dotenv = require("dotenv");
-dotenv.config();
 
+const router = express.Router();
+
+dotenv.config();
 const API_KEY = process.env.GOOGLE_API_KEY;
 
 router.get("/autocomplete", async (req, res) => {
   try {
-    const input = "ah";
-    const includeQueryPredictions = req.query.includeQueryPredictions === "true";
+
     const response = await axios({
       method: 'POST',
       url: 'https://places.googleapis.com/v1/places:autocomplete',
@@ -18,8 +18,8 @@ router.get("/autocomplete", async (req, res) => {
         'Content-Type': 'application/json'
       },
       data: {
-        input: input,
-        includeQueryPredictions: includeQueryPredictions,
+        input: req.query.input,
+        includeQueryPredictions: req.query.includeQueryPredictions === "true",
         includedPrimaryTypes: ["locality", "country", "administrative_area_level_1"],
         languageCode: "en"
       }
@@ -31,8 +31,7 @@ router.get("/autocomplete", async (req, res) => {
         ? ", " + s.placePrediction.structuredFormat.secondaryText.text
         : "")
     );
-    res.json(response.data);
-    console.log("Places:", places);
+    res.json(places);
 
   } catch (error) {
     console.error("Error in autocomplete route:", error);
