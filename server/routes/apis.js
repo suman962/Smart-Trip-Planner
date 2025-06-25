@@ -25,6 +25,9 @@ router.get("/autocomplete", async (req, res) => {
       }
     });
     const suggestions = response.data.suggestions;
+    if (!suggestions || suggestions.length === 0) {
+      return res.json([]);
+    }
     const places = suggestions.map(s =>
       s.placePrediction.structuredFormat.mainText.text +
       (s.placePrediction.structuredFormat.secondaryText?.text
