@@ -11,12 +11,14 @@
   },
   "dependencies": {
     "@heroui/navbar": "^2.2.20",
+    "@heroui/progress": "^2.2.18",
     "@heroui/react": "^2.8.0-beta.10",
     "@tailwindcss/vite": "^4.1.10",
     "firebase": "^11.9.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "react-router-dom": "^7.6.2"
+    "react-router-dom": "^7.6.2",
+    "swiper": "^11.2.8"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
