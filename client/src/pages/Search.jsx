@@ -1,8 +1,11 @@
 import Nav from '../components/nav';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 
 const Search = () => {
+  const navigate = useNavigate();
+
   const [inputValue, setInputValue] = useState('');
   const [places, setPlaces] = useState([]);
   const [showPlaces, setShowPlaces] = useState(false);
@@ -52,6 +55,13 @@ const Search = () => {
     setPlaces([]);
   };
 
+  const placeSubmit = (event) => {
+    event.preventDefault();
+    setIsValidSelection(false);
+    const placeId = selectedPlace.placeId;
+    navigate(`/trip/${placeId}`);
+  }
+
   return (
     <div 
       className="h-screen bg-cover bg-center bg-no-repeat bg-fixed flex flex-col"
@@ -64,7 +74,10 @@ const Search = () => {
           <h1 className="text-3xl md:text-4xl font-bold text-amber-50 mb-4 text-center">Search for Trips</h1>
           <p className="text-md md:text-lg text-sky-100 mb-8 text-center">Find your next destination with ease</p>
           
-          <form className="relative flex justify-center bg-slate-700/60 rounded-lg p-4 shadow-lg">
+          <form 
+              className="relative flex justify-center bg-slate-700/60 rounded-lg p-4 shadow-lg"
+              onSubmit={placeSubmit}
+            >
             <input 
               type="text" 
               placeholder="Enter a place..." 
@@ -73,7 +86,8 @@ const Search = () => {
               className="border-2 border-gray-300 rounded-lg p-2 w-60 md:w-80 lg:w-120 text-white"
             />
             <button 
-              type="submit" 
+              type="submit"
+              disabled={!isValidSelection}
               className="ml-2 bg-sky-500 text-white rounded-lg px-4 py-4 hover:bg-sky-600"
             >
               Search
