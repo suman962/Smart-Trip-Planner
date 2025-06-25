@@ -59,7 +59,7 @@ const Search = () => {
     event.preventDefault();
     setIsValidSelection(false);
     const placeId = selectedPlace.placeId;
-    navigate(`/trip/${placeId}`);
+    navigate(`/trip?place=${placeId}`);
   }
 
   return (
@@ -67,7 +67,7 @@ const Search = () => {
       className="h-screen bg-cover bg-center bg-no-repeat bg-fixed flex flex-col"
       style={{ backgroundImage: "url('./assets/search.png')" }}
     >
-      <Nav currentPage='Search'/>
+      <Nav currentPage='Search' />
 
       <main className="flex-1 flex items-center justify-center -mt-60">
         <div className='flex flex-col items-center'>

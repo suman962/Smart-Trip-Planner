@@ -3,7 +3,8 @@ import {
   Home,
   Login,
   Signup,
-  Search
+  Search,
+  Trip
 } from "./pages";
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/search" element={<Search />} />
+          <Route path="/trip" element={<Trip />} />
         </Routes>
       </BrowserRouter>
     </>
