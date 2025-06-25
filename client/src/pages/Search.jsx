@@ -4,24 +4,24 @@ import { useState } from 'react';
 
 const Search = () => {
   const [inputValue, setInputValue] = useState('');
-  const [suggestions, setSuggestions] = useState([]);
-  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [places, setPlaces] = useState([]);
+  const [showPlaces, setShowPlaces] = useState(false);
   const [selectedPlace, setSelectedPlace] = useState('');
   const [isValidSelection, setIsValidSelection] = useState(false);
   const [debounceTimer, setDebounceTimer] = useState(null);
 
-  const fetchSuggestions = async (input) => {
+  const fetchPlaces = async (input) => {
     if (input.length < 2) return;
 
     try {
       const response = await fetch(`http://localhost:3400/api/autocomplete?input=${input}`);
-      const places = await response.json();
-      setSuggestions(places);
-      setShowSuggestions(true);
+      const placesFromApi = await response.json();
+      setPlaces(placesFromApi);
+      setShowPlaces(true);
     } catch (error) {
       console.error('Autocomplete error:', error);
-      setSuggestions([]);
-      setShowSuggestions(false);
+      setPlaces([]);
+      setShowPlaces(false);
     }
   };
 
@@ -34,22 +34,22 @@ const Search = () => {
     
     const timer = setTimeout(() => {
       if (value.trim()) {
-        fetchSuggestions(value);
+        fetchPlaces(value);
       } else {
-        setSuggestions([]);
-        setShowSuggestions(false);
+        setPlaces([]);
+        setShowPlaces(false);
       }
     }, 300); 
     
     setDebounceTimer(timer);
   };
 
-  const handleSuggestionClick = (suggestion) => {
-    setInputValue(suggestion);
-    setSelectedPlace(suggestion);
+  const handlePlacesClick = (place) => {
+    setInputValue(place.name);
+    setSelectedPlace(place);
     setIsValidSelection(true);
-    setShowSuggestions(false);
-    setSuggestions([]);
+    setShowPlaces(false);
+    setPlaces([]);
   };
 
   return (
@@ -78,15 +78,15 @@ const Search = () => {
             >
               Search
             </button>
-            {showSuggestions && suggestions.length > 0 && (
+            {showPlaces && places.length > 0 && (
               <div className="absolute top-full left-0 right-0 rounded-lg mt-1 max-h-60 overflow-y-auto z-10">
-                {suggestions.map((suggestion, index) => (
+                {places.map((place, index) => (
                   <div
                     key={index}
-                    onClick={() => handleSuggestionClick(suggestion)}
+                    onClick={() => handlePlacesClick(place)}
                     className="px-4 py-2 hover:bg-gray-100 text-sky-50 hover:text-sky-950 hover:font-bold bg-slate-700/60"
                   >
-                    {suggestion}
+                    {place.name}
                   </div>
                 ))}
               </div>
