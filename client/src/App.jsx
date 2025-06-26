@@ -4,7 +4,8 @@ import {
   Login,
   Signup,
   Search,
-  Trip
+  Trip,
+  Trips
 } from "./pages";
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/search" element={<Search />} />
           <Route path="/trip" element={<Trip />} />
+          <Route path="/trips" element={<Trips />} />
         </Routes>
       </BrowserRouter>
     </>

@@ -17,13 +17,25 @@ const Nav = ({ className = "", currentPage = "Home" }) => {
     }
   }, []);
 
-  const menuItems = [
+  const menuItems = LoggedIn ? [
     { name: "Home", href: "/" },
     { name: "Search", href: "/search" },
+    { name: "Trips", href: "/trips" },
+    { name: "Log out", href: "/", isLogout: true }
+  ] : [
+    { name: "Home", href: "/" },
+    { name: "Search", href: "/search" },  
     { name: "Trips", href: "/trips" },
     { name: "Login", href: "/login" },
     { name: "Sign Up", href: "/signup" }
   ];
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('expiry');
+    setLoggedIn(false);
+    setIsMenuOpen(false); //close menu after logout
+  };
 
   const navBarClass = (
     className.includes('bg-') ? className
@@ -71,11 +83,7 @@ const Nav = ({ className = "", currentPage = "Home" }) => {
             <Button
               color="primary"
               className="bg-sky-500 hover:bg-sky-600 text-white"
-              onPress={() => {
-                localStorage.removeItem('token');
-                localStorage.removeItem('expiry');
-                setLoggedIn(false);
-              }}
+              onPress={handleLogout}
             >
               Logout
             </Button>
@@ -106,6 +114,7 @@ const Nav = ({ className = "", currentPage = "Home" }) => {
               className={`w-full text-white ${currentPage === item.name ? "font-semibold text-sky-400" : ""}`}
               href={item.href}
               size="lg"
+              onPress={item.isLogout ? handleLogout : undefined}
             >
               {item.name}
             </Link>

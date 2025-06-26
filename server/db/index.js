@@ -106,13 +106,19 @@ router.put("/savetrip", async (req, res) => {
 
 router.get("/gettrips", async (req, res) => {
   try {
-    const { email } = req.query;
+    const { email, tripId } = req.query;
 
-    if (!email) {
+    if (!email && !tripId) {
       return res.status(400).json({ error: "Email is required" });
     }
 
     const trips = await Trip.find({ email });
+
+    if (tripId) {
+      const trip = await Trip.findOne({ _id: tripId });
+      return res.status(200).json(trip);
+    }
+
     res.status(200).json(trips);
 
   } catch (error) {
