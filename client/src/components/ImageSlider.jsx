@@ -1,5 +1,5 @@
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay } from 'swiper/modules';
+import { Autoplay, EffectCoverflow } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/autoplay';
 
@@ -17,9 +17,9 @@ function ImageSlider({ images }) {
           disableOnInteraction: false,
           pauseOnMouseEnter: false,
         }}
-        allowTouchMove={false}
+        allowTouchMove={true}
         freeMode={true}
-        freeModeMomentum={false}
+        effect={EffectCoverflow}
         className="!overflow-visible"
         breakpoints={{
           320: {
