@@ -23,6 +23,17 @@ const Trip = () => {
   }, [placeId, navigate]);
 
   useEffect(() => {
+    const token = localStorage.getItem('token');
+    const expiry = localStorage.getItem('expiry');
+    if (!token || !expiry || new Date(expiry) < new Date()) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('expiry');
+      navigate('/login');
+    }
+
+  }, []);
+
+  useEffect(() => {
     const fetchPlaceDetails = async () => {
       try {
         const response = await fetch(`http://localhost:3400/api/place?id=${placeId}`);

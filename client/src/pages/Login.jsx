@@ -2,19 +2,22 @@ import { useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase';
 import Nav from '../components/nav';
+import { Link } from 'react-router-dom';
 import { LoginOverlayClouds, LoginOverlayAirplane } from '../components/LoginOverlay';
-
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate();
+
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      const response = await fetch('http://localhost:3400/api/login', {
+      const response = await fetch('http://localhost:3400/api/db/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -27,7 +30,7 @@ const Login = () => {
       if (response.ok) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('expiry', data.expiry);
-        // redirect set soon
+        navigate('/');
       } else {
         setError(data.error || "Login failed");
       }
@@ -73,7 +76,10 @@ const Login = () => {
                   />
                 </div>
               </div>
-              <div className='mt-4 text-center'>
+              <div className='text-sm text-gray-500 mt-3'>
+                Don't have an account? <Link to="/signup" className='text-cyan-500 hover:underline'>Sign Up</Link>
+              </div>
+              <div className='mt-5 text-center'>
                 <button type="submit" className="bg-cyan-500 text-white px-4 py-2 rounded-lg">
                   Login
                 </button>

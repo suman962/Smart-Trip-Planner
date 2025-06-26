@@ -1,5 +1,5 @@
 import Nav from '../components/nav';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -12,6 +12,17 @@ const Search = () => {
   const [selectedPlace, setSelectedPlace] = useState('');
   const [isValidSelection, setIsValidSelection] = useState(false);
   const [debounceTimer, setDebounceTimer] = useState(null);
+  
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const expiry = localStorage.getItem('expiry');
+    if (!token || !expiry || new Date(expiry) < new Date()) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('expiry');
+      navigate('/login');
+    }
+
+  }, []);
 
   const fetchPlaces = async (input) => {
     if (input.length < 2) return;

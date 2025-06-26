@@ -16,8 +16,6 @@ const userSchema = new mongoose.Schema({
   }
 });
 
-const User = mongoose.model("User", userSchema);
-
 const userTokenSchema = new mongoose.Schema({
   email: {
     type: String,
@@ -34,6 +32,10 @@ const userTokenSchema = new mongoose.Schema({
   }
 });
 
-const UserToken = mongoose.model("UserToken", userTokenSchema);
 
-module.exports = { User, UserToken };
+module.exports = function getModels(db) {
+  return {
+    User: db.model("User", userSchema, "users"),
+    UserToken: db.model("UserToken", userTokenSchema, "user_tokens")
+  };
+};

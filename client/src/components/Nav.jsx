@@ -1,8 +1,21 @@
 import {Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenuToggle, NavbarMenu, NavbarMenuItem, Link, Button} from "@heroui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const Nav = ({ className = "", currentPage = "Home" }) => { 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [LoggedIn, setLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const expiry = localStorage.getItem('expiry');
+    if (!token || !expiry || new Date(expiry) < new Date()) {
+      localStorage.removeItem('token'); 
+      localStorage.removeItem('expiry');
+      setLoggedIn(false);
+    } else {
+      setLoggedIn(true);
+    }
+  }, []);
 
   const menuItems = [
     { name: "Home", href: "/" },
@@ -53,18 +66,36 @@ const Nav = ({ className = "", currentPage = "Home" }) => {
       </NavbarContent>
 
       <NavbarContent justify="end" className="hidden sm:flex">
-        <NavbarItem>
-          <Link href="/login" className={`text-inherit ${currentPage === "Login" ? "font-semibold text-sky-400" : ""}`}>
-            Login
-          </Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Button as={Link} color="primary" href="/signup" variant="flat" 
-            className={`${currentPage === "Sign Up" ? "text-black bg-inherit border-3 border-sky-700" : "text-white bg-sky-700"}`}
-          >
-            Sign Up
-          </Button>
-        </NavbarItem>
+        {LoggedIn ? (
+          <NavbarItem>
+            <Button
+              color="primary"
+              className="bg-sky-500 hover:bg-sky-600 text-white"
+              onPress={() => {
+                localStorage.removeItem('token');
+                localStorage.removeItem('expiry');
+                setLoggedIn(false);
+              }}
+            >
+              Logout
+            </Button>
+          </NavbarItem>
+        ) : (
+          <>
+            <NavbarItem>
+              <Link href="/login" className={`text-inherit ${currentPage === "Login" ? "font-semibold text-sky-400" : ""}`}>
+                Login
+              </Link>
+            </NavbarItem>
+            <NavbarItem>
+              <Button as={Link} color="primary" href="/signup" variant="flat" 
+                className={`${currentPage === "Sign Up" ? "text-sky-400 font-semibold bg-inherit border-2 border-sky-400" : "text-white bg-sky-700"}`}
+              >
+                Sign Up
+              </Button>
+            </NavbarItem>
+          </>
+        )}
       </NavbarContent>
 
       <NavbarMenu>

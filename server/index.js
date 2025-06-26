@@ -21,6 +21,12 @@ app.use(
   apis
 );
 
+dbs = require('./db');
+app.use(
+  '/api/db',
+  dbs
+);
+
 app.get('*', (req,res) =>{
     res.sendFile(path.join(__dirname,'../client/dist/index.html'));
 });

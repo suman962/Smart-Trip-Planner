@@ -1,14 +1,17 @@
 import { useState } from 'react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase';
+import { Link } from 'react-router-dom';
 import Nav from '../components/nav';
 import { LoginOverlayClouds, LoginOverlayAirplane } from '../components/LoginOverlay';
-
+import { useNavigate } from 'react-router-dom';
 
 const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const navigate = useNavigate();
+
   const [error, setError] = useState("");
 
   const handleSignup = async (e) => {
@@ -21,7 +24,7 @@ const Signup = () => {
     
     try {
       await createUserWithEmailAndPassword(auth, email, password);
-      const response = await fetch('http://localhost:3400/api/register', {
+      const response = await fetch('http://localhost:3400/api/db/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -32,7 +35,7 @@ const Signup = () => {
       if (response.ok) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('expiry', data.expiry);
-        // redirect set soon
+        navigate('/');
       } else {
         setError(data.error || "Signup failed");
       }
@@ -88,6 +91,9 @@ const Signup = () => {
                     className='border border-gray-300 rounded-lg p-2 w-full'
                   />
                 </div>
+              </div>
+              <div className='text-sm text-gray-500 mt-3'>
+                Already have an account? <Link to="/login" className='text-cyan-500 hover:underline'>Login</Link>
               </div>
               <div className='mt-4 text-center'>
                 <button type="submit" className="bg-cyan-500 text-white px-4 py-2 rounded-lg">

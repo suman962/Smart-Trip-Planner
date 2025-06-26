@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const { User, UserToken } = require("../models/User");
 const express = require("express");
 const dotenv = require("dotenv");
 const crypto = require('crypto');
@@ -13,11 +12,16 @@ mongoose.connect(MONGO_AUTH)
   .then(() => console.log("MongoDB connected"))
   .catch(err => console.error("MongoDB error:", err));
 
+const db = mongoose.connection.useDb('SmartTrip');
+
 function getToken() {
   const token = crypto.randomBytes(32).toString('hex');
   const expiry = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000); // 90 days
   return { token, expiry };
 }
+
+const getModels = require("../models/User");
+const { User, UserToken } = getModels(db);
 
 router.post("/register", async (req, res) => {
   try {
@@ -37,8 +41,7 @@ router.post("/register", async (req, res) => {
 
     const { token, expiry } = getToken();
 
-    const userToken = new UserToken({ email, token, expiry });
-    await userToken.save();
+    await UserToken.updateOne({ email }, { token, expiry }, { upsert: true });
 
     res.status(201).json({ message: "User registered successfully", token, expiry });
 
@@ -65,16 +68,19 @@ router.post("/login", async (req, res) => {
     if (token) {
       const expiry = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000); // 90 days
       await UserToken.updateOne({ email }, { expiry });
+      res.status(200).json({ message: "Login successful", token, expiry });
+
     }
     else {
       const { token, expiry } = getToken();
       const userToken = new UserToken({ email, token, expiry });
       await userToken.save();
+      res.status(201).json({ message: "Login successful", token, expiry });
     }
-    res.status(200).json({ message: "Login successful", token, expiry });
-
   } catch (error) {
     console.error("Error in login route:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+module.exports = router;
