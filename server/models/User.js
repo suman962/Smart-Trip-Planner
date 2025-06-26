@@ -33,9 +33,4 @@ const userTokenSchema = new mongoose.Schema({
 });
 
 
-module.exports = function getModels(db) {
-  return {
-    User: db.model("User", userSchema, "users"),
-    UserToken: db.model("UserToken", userTokenSchema, "user_tokens")
-  };
-};
+module.exports = { userSchema, userTokenSchema };

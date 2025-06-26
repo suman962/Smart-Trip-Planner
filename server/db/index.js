@@ -20,8 +20,8 @@ function getToken() {
   return { token, expiry };
 }
 
-const getModels = require("../models/User");
-const { User, UserToken } = getModels(db);
+const getModels = require("../models");
+const { User, UserToken, Trip } = getModels(db);
 
 router.post("/register", async (req, res) => {
   try {
