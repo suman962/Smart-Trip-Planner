@@ -1,6 +1,8 @@
 const express = require("express");
 const axios = require("axios");
-const router = express.Router()
+const askAI = require("../../ai");
+
+const router = express.Router();
 
 router.post("/weatherhistory", async (req, res) => {
   try {
@@ -25,8 +27,7 @@ router.post("/weatherhistory", async (req, res) => {
         url: "https://archive-api.open-meteo.com/v1/archive",
         params: params
       }
-    )
-    console.log("Weather history response:", response.data);
+    );
     res.json(response.data);
   } catch (error) {
     console.error("Error fetching weather history:", error);
@@ -56,13 +57,58 @@ router.post("/weatherforecast", async (req, res) => {
         url: "https://api.open-meteo.com/v1/forecast",
         params: params
       }
-    )
-    console.log("Weather Forecast Response:", response.data);
+    );
     res.json(response.data);
   } catch (error) {
     console.error("Error fetching forecast:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+router.post("/weatherbesttime", async (req, res) => {
+  try {
+    const { forecast, history } = req.body;
+    let { toFind } = req.body;
+    if (!forecast || !history || !toFind)
+      return res.status(400).json({ error: "Missing forecast, history, or toFind" });
+
+    toFind = parseInt(toFind);
+
+    var time;
+    switch (toFind) {
+      case 7:
+        time = "day";
+      case 30:
+        time = "week";
+      case 90:
+        time = "bi-week";
+      case 365:
+        time = "month";
+    }
+
+    const question = `Forecast: ${JSON.stringify(forecast)}
+    History: ${JSON.stringify(history)}
+
+    Forecast is upto 14 days and history is upto 5 years of data given.
+    what is the best time to visit?
+    Remember to take every condition. like first find optimal temperature, then find optimal weather code, then find optimal precipitation, then find optimal daylight duration.
+    and then combine all these to find the best time to visit.
+    And at last, try to think comparing human visit and comfort level.
+    Say me the answer in upcoming ${time} format within ${toFind} days based on the forecast and history data.
+    if upcoming time is day, then say me day to visit in upcoming ${toFind} days.
+    if upcoming time is week, then say me week to visit in upcoming ${toFind} days.
+    if upcoming time is bi-week, then say me bi-week to visit in upcoming ${toFind} days.
+    if upcoming time is month, then say me month to visit in upcoming ${toFind} days.
+    Don't Say anything else, just give me the answer in a single word or a phrase for a ${time}.
+    `;
+
+    const aiResponse = await askAI(question);
+    res.json(aiResponse.replace('.', ''));
+  } catch (err) {
+    console.error("weatherbesttime error:", err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 
 module.exports = router;

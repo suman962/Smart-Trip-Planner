@@ -112,34 +112,30 @@ const Trip = () => {
     fetchWeatherForecast();
   }, [placeDetails]);
 
-  // this function should wait for history and forecast to be fetched
-  useEffect(() => {
-    const fetchBestTimeToVisit = async () => {
-      if (!weatherHistory || !weatherForecast) {
-        return;
-      }
-      try {
-        const response = await fetch('http://localhost:3400/api/weatherbesttime', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            history: weatherHistory,
-            forecast: weatherForecast,
-            toFind: 365
-          }),
-        });
-
-        const data = await response.json();
-        console.log('Best Time to Visit Data:', data);
-        setBestTime(data);
-      } catch (error) {
-        console.error('Error fetching best time to visit:', error);
-      }
+  const fetchBestTimeToVisit = async () => {
+    if (!weatherHistory || !weatherForecast) {
+      return;
     }
-    fetchBestTimeToVisit();
-  }, [weatherHistory, weatherForecast, placeDetails]);
+    try {
+      const response = await fetch('http://localhost:3400/api/weatherbesttime', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          history: weatherHistory,
+          forecast: weatherForecast,
+          toFind: 7
+        }),
+      });
+      console.log(response);
+      const data = await response.json();
+      console.log('Best Time to Visit Data:', data);
+      setBestTime(data);
+    } catch (error) {
+      console.error('Error fetching best time to visit:', error);
+    }
+  };
 
   return (
     <div className={`bg-[#214a68] h-screen`}>
