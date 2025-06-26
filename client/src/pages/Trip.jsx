@@ -12,6 +12,7 @@ const Trip = () => {
   const [weatherForecast, setWeatherForecast] = useState(null);
   const [weatherHistory, setWeatherHistory] = useState(null);
   const [bestTime, setBestTime] = useState(null);
+  const [findButtonDisabled, setFindButtonDisabled] = useState(false);
 
   const placeId = new URLSearchParams(window.location.search).get('place');
 
@@ -103,7 +104,6 @@ const Trip = () => {
         });
 
         const data = await response.json();
-        console.log('Weather Forecast Data:', data);
         setWeatherForecast(data);
       } catch (error) {
         console.error('Error fetching weather forecast:', error);
@@ -112,10 +112,13 @@ const Trip = () => {
     fetchWeatherForecast();
   }, [placeDetails]);
 
-  const fetchBestTimeToVisit = async () => {
+  const fetchBestTimeToVisit = async (timeFrame) => {
     if (!weatherHistory || !weatherForecast) {
       return;
     }
+    
+    setFindButtonDisabled(true);
+
     try {
       const response = await fetch('http://localhost:3400/api/weatherbesttime', {
         method: 'POST',
@@ -125,23 +128,22 @@ const Trip = () => {
         body: JSON.stringify({
           history: weatherHistory,
           forecast: weatherForecast,
-          toFind: 7
+          toFind: timeFrame
         }),
       });
-      console.log(response);
       const data = await response.json();
-      console.log('Best Time to Visit Data:', data);
       setBestTime(data);
+      
     } catch (error) {
       console.error('Error fetching best time to visit:', error);
     }
   };
 
   return (
-    <div className={`bg-[#214a68] h-screen`}>
+    <div className={`bg-[#214a68] min-h-screen`}>
       <Nav currentPage='Search' className='bg-cyan-100/70' />
 
-      <div className="flex flex-col items-center h-full">
+      <div className="flex flex-col items-center min-h-screen pb-4">
         <h1 className="text-3xl lg:text-4xl text-white my-4 p-2">{
           placeDetails ? placeDetails.formattedAddress : 'Loading...'
         }
@@ -160,7 +162,7 @@ const Trip = () => {
                 }
               </div>
               <div className="w-full p-4 mt-4 lg:mt:8 flex flex-col items-center">
-                <h2 className="text-2xl text-white mb-4">Weather Forecast</h2>
+                <h2 className="text-2xl md:text-3xl text-white mb-4">Weather Forecast</h2>
                 {
                   weatherForecast ? (
                     <div className="flex overflow-x-auto md:justify-center gap-1 md:gap-3 pb-2 w-full">
@@ -190,16 +192,64 @@ const Trip = () => {
                       ))}
                     </div>
                   ) : (
-                    <p className="text-white">Loading weather forecast...</p>
+                    <p className="text-white text-center">
+                      Loading weather forecast...
+                    </p>
                   )
                 }
               </div>
-              <div>
-                <h2 className="text-2xl text-white mb-4">Plan To Visit</h2>
-                <button>In next 7 days</button>
-                <button>In next 30 days</button>
-                <button>In next 90 days</button>
-                <button>Best time to visit</button>
+              <div className="w-full p-4 mt-4 lg:mt:8 flex flex-col items-center">
+                <h2 className="text-2xl md:text-3xl text-white mb-4">Plan To Visit</h2>
+                {
+                  bestTime ? (
+                    <div className="flex flex-col items-center gap-4">
+                      <div className="bg-slate-500/30 text-gray-100 backdrop-blur-md border border-white/20 p-3 rounded-lg shadow-md w-full max-w-md text-center">
+                        <p className="font-normal md:text-lg">The best time to visit is:</p>
+                        <p className="font-bold md:text-xl">{bestTime}</p>
+                      </div>
+
+                      <div>
+                        <button 
+                          className='mt-4 bg-blue-500 text-white md:text-lg px-5 py-2 rounded-xl hover:bg-blue-600'
+                        >
+                          Save
+                        </button>
+                      </div>
+                    </div>
+                  ) :
+                  (
+                    <div className='grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5'>
+                      <button 
+                        className='bg-blue-500 text-white px-4 py-2 rounded-md' 
+                        onClick={() => fetchBestTimeToVisit(7)}
+                        disabled={findButtonDisabled}
+                      >
+                        In next 7 days
+                      </button>
+                      <button 
+                        className='bg-blue-500 text-white px-4 py-2 rounded-md' 
+                        onClick={() => fetchBestTimeToVisit(30)}
+                        disabled={findButtonDisabled}
+                      >
+                        In next 30 days
+                      </button>
+                      <button 
+                        className='bg-blue-500 text-white px-4 py-2 rounded-md' 
+                        onClick={() => fetchBestTimeToVisit(90)}
+                        disabled={findButtonDisabled}
+                      >
+                        In next 90 days
+                      </button>
+                      <button 
+                        className='bg-blue-500 text-white px-4 py-2 rounded-md' 
+                        onClick={() => fetchBestTimeToVisit(365)}
+                        disabled={findButtonDisabled}
+                      >
+                        Best time to visit
+                      </button>
+                    </div>
+                  )
+                }
               </div>
             </div>
 

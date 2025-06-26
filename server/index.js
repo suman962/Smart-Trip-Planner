@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 
 const app = express();
 const PORT = 3400;
@@ -12,15 +13,17 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get('/', async (req, res) => {
-  res.send('Test || Working');
-});
+app.use(express.static(path.join(__dirname, '../client/dist')));
 
 apis = require('./routes/apis');
 app.use(
   '/api',
   apis
 );
+
+app.get('*', (req,res) =>{
+    res.sendFile(path.join(__dirname,'../client/dist/index.html'));
+});
 
 app.listen(PORT, () => {
   console.log(`Server is now running on port ${PORT}`);
