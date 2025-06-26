@@ -83,4 +83,42 @@ router.post("/login", async (req, res) => {
   }
 });
 
+router.put("/savetrip", async (req, res) => {
+  try {
+    const { email, tripData } = req.body;
+
+    if (!email || !tripData) {
+      return res.status(400).json({ error: "Email and trip data is required" });
+    }
+    if (!tripData.placeId || !tripData.name || !tripData.bestTime || !tripData.image) {
+      return res.status(400).json({ error: "Trip data must include placeId, name, and bestTime" });
+    }
+    const trip = new Trip({ email, ...tripData });
+    await trip.save();
+
+    res.status(201).json({ message: "Trip saved successfully", trip });
+
+  } catch (error) {
+    console.error("Error in savetrip route:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+router.get("/gettrips", async (req, res) => {
+  try {
+    const { email } = req.query;
+
+    if (!email) {
+      return res.status(400).json({ error: "Email is required" });
+    }
+
+    const trips = await Trip.find({ email });
+    res.status(200).json(trips);
+
+  } catch (error) {
+    console.error("Error in gettrips route:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 module.exports = router;
