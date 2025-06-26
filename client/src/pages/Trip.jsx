@@ -11,6 +11,7 @@ const Trip = () => {
   const [placeDetails, setPlaceDetails] = useState(null);
   const [weatherForecast, setWeatherForecast] = useState(null);
   const [weatherHistory, setWeatherHistory] = useState(null);
+  const [bestTime, setBestTime] = useState(null);
 
   const placeId = new URLSearchParams(window.location.search).get('place');
 
@@ -111,6 +112,35 @@ const Trip = () => {
     fetchWeatherForecast();
   }, [placeDetails]);
 
+  // this function should wait for history and forecast to be fetched
+  useEffect(() => {
+    const fetchBestTimeToVisit = async () => {
+      if (!weatherHistory || !weatherForecast) {
+        return;
+      }
+      try {
+        const response = await fetch('http://localhost:3400/api/weatherbesttime', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            history: weatherHistory,
+            forecast: weatherForecast,
+            toFind: 365
+          }),
+        });
+
+        const data = await response.json();
+        console.log('Best Time to Visit Data:', data);
+        setBestTime(data);
+      } catch (error) {
+        console.error('Error fetching best time to visit:', error);
+      }
+    }
+    fetchBestTimeToVisit();
+  }, [weatherHistory, weatherForecast, placeDetails]);
+
   return (
     <div className={`bg-[#214a68] h-screen`}>
       <Nav currentPage='Search' className='bg-cyan-100/70' />
@@ -155,9 +185,9 @@ const Trip = () => {
                               )}
                             </span>
                             <div className="text-xs md:text-sm space-y-0 md:space-y-1">
-                              <p className="font-medium text-center">{weatherForecast.daily.temperature_2m_max[index]}°</p>
-                              <p className="text-gray-600 text-center">{weatherForecast.daily.temperature_2m_min[index]}°</p>
-                              <p className="text-blue-600 text-center">{weatherForecast.daily.precipitation_sum[index]}</p>
+                              <p className="font-medium text-center">{weatherForecast.daily.temperature_2m_max[index]}° C</p>
+                              <p className="text-gray-600 text-center text-[9px] md:text-xs">FL: {weatherForecast.daily.temperature_2m_min[index]}° C</p>
+                              <p className="text-blue-600 text-center text-[10px] md:text-[13px]">{weatherForecast.daily.precipitation_sum[index]} mm</p>
                             </div>
                           </div>
                         </div>
@@ -167,6 +197,13 @@ const Trip = () => {
                     <p className="text-white">Loading weather forecast...</p>
                   )
                 }
+              </div>
+              <div>
+                <h2 className="text-2xl text-white mb-4">Plan To Visit</h2>
+                <button>In next 7 days</button>
+                <button>In next 30 days</button>
+                <button>In next 90 days</button>
+                <button>Best time to visit</button>
               </div>
             </div>
 

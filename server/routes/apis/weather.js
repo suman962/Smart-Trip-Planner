@@ -26,6 +26,7 @@ router.post("/weatherhistory", async (req, res) => {
         params: params
       }
     )
+    console.log("Weather history response:", response.data);
     res.json(response.data);
   } catch (error) {
     console.error("Error fetching weather history:", error);
@@ -56,9 +57,10 @@ router.post("/weatherforecast", async (req, res) => {
         params: params
       }
     )
+    console.log("Weather Forecast Response:", response.data);
     res.json(response.data);
   } catch (error) {
-    console.error("Error fetching forecast history:", error);
+    console.error("Error fetching forecast:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });

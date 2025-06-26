@@ -39,7 +39,7 @@ function ImageSlider({ images }) {
               <img
                 src={src}
                 alt={`slide-${index}`}
-                className="h-32 w-48 md:h-36 md:w-57 object-cover rounded-lg shadow-md"
+                className="h-32 w-48 md:h-36 md:w-57 object-cover rounded-md shadow-sm"
               />
             </div>
           </SwiperSlide>
