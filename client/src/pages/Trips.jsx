@@ -1,12 +1,16 @@
 import Nav from '../components/Nav';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Link } from 'react-router-dom';
+import { showTrip } from './Trip';
 
 const Trips = () => {
   const [tripIdPresent, setTripIdPresent] = useState(false);
   const [trip, setTrip] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const { TripHtml, weatherHistory } = showTrip(trip?.placeId || null);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -18,15 +22,6 @@ const Trips = () => {
     }
   }, []);
 
-  const tripId = new URLSearchParams(window.location.search).get('tripId');
-  useEffect(() => {
-    if (!tripId) {
-      setTripIdPresent(false);
-    } else {
-      setTripIdPresent(true);
-    }
-  }, [tripId]);
-
   useEffect(() => {
     const fetchTrip = async () => {
       const token = localStorage.getItem('token');
@@ -37,15 +32,14 @@ const Trips = () => {
         return;
       }
       const email = checkTokenData.email;
-      if (!tripIdPresent) {
-        const fetchTripsResponse = await fetch(`http://localhost:3400/api/db/gettrips?email=${email}`);
-        const fetchTripsData = await fetchTripsResponse.json();
-        if (fetchTripsData.error) {
-          console.error("Fetch trips failed:", fetchTripsData.error);
-          return;
-        }
-        setTrip(fetchTripsData);
-      } else {
+      
+      const tripId = new URLSearchParams(window.location.search).get('tripid');
+      console.log("tripId found:", tripId);
+      
+      if (tripId) {
+        // for when tripId is present in the URL
+        console.log("Setting tripIdPresent to true");
+        setTripIdPresent(true);
         const fetchTripResponse = await fetch(`http://localhost:3400/api/db/gettrips?tripId=${tripId}`);
         const fetchTripData = await fetchTripResponse.json();
         if (fetchTripData.error) {
@@ -56,12 +50,24 @@ const Trips = () => {
           navigate('/trips');
           return;
         }
+        console.log("Setting trip data:", fetchTripData);
         setTrip(fetchTripData);
+      } else {
+        // Fetch all trips
+        console.log("Setting tripIdPresent to false");
+        setTripIdPresent(false);
+        const fetchTripsResponse = await fetch(`http://localhost:3400/api/db/gettrips?email=${email}`);
+        const fetchTripsData = await fetchTripsResponse.json();
+        if (fetchTripsData.error) {
+          console.error("Fetch trips failed:", fetchTripsData.error);
+          return;
+        }
+        setTrip(fetchTripsData);
       }
     };
 
     fetchTrip();
-  }, []);
+  }, [location.search]); 
 
   return (
     <div 
@@ -73,24 +79,38 @@ const Trips = () => {
         {
           tripIdPresent ? (
             <div className="flex flex-col items-center justify-center h-full">
-              <h1 className="text-4xl font-bold text-white mb-4">{trip.name}</h1>
-              <img src={trip.image} alt={trip.name} className="w-1/2 rounded-lg shadow-lg mb-4" />
-              <p className="text-lg text-white mb-2">Best Time: {trip.bestTime}</p>
-              <p className="text-md text-white">Place ID: {trip.placeId}</p>
+              {trip && TripHtml}
+              {weatherHistory && (
+                <div className="bg-slate-500/30 text-gray-100 backdrop-blur-md border border-white/20 p-3 rounded-lg shadow-md w-full max-w-md text-center">
+                  <p className="font-normal md:text-lg">The best time to visit is:</p>
+                  <p className="font-bold md:text-xl">{trip.bestTime}</p>
+                </div>
+              )}
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center h-full">
               <h1 className="text-4xl font-bold text-white my-4 md:mt-8 text-shadow-lg/75">Your Trips</h1>
               {
                 trip && trip.length > 0 ? (
-                  <ul className="list-disc text-white">
+                  <ul className="text-white flex flex-col items-center my-4">
                     {trip.map((t) => (
                       <li key={t._id} className="mb-2">
                         <Link
-                          to={`/trips?tripId=${t._id}`} 
+                          to={`/trips?tripid=${t._id}`} 
                           className="text-blue-400 hover:underline"
                         >
-                          {t.name}
+                          <div className='w-80 md:w-120 lg:w-150 h-25 px-1.5 border border-gray-300 rounded-lg shadow-lg hover:bg-gray-800/10 flex flex-row items-center gap-5 backdrop-blur-lg'>
+                            <div>
+                              <img 
+                                src={t.image}
+                                className="object-cover rounded-lg size-22"
+                              />
+                            </div>
+                            <div className=''>
+                              <h2 className="text-lg font-semibold">{t.name}</h2>
+                              <p className="text-sm text-gray-400">Saved on: {new Date(t.createdAt).toLocaleDateString()}</p>
+                            </div>
+                          </div>
                         </Link>
                       </li>
                     ))}
