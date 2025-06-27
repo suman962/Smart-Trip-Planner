@@ -21,17 +21,16 @@ router.post("/weatherhistory", async (req, res) => {
       format: "json"
     };
 
-    const response = await axios(
-      {
-        method: "get",
-        url: "https://archive-api.open-meteo.com/v1/archive",
-        params: params
-      }
-    );
+    const response = await axios({
+      method: "get",
+      url: "https://archive-api.open-meteo.com/v1/archive",
+      params: params,
+      timeout: 10000 
+    });
     res.json(response.data);
   } catch (error) {
-    console.error("Error fetching weather history:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    console.error("Error fetching weather history:", error.message);
+    res.status(500).json({ error: "Weather service temporarily unavailable" });
   }
 });
 
@@ -51,17 +50,16 @@ router.post("/weatherforecast", async (req, res) => {
       forecast_days: 14
     };
 
-    const response = await axios(
-      {
-        method: "get",
-        url: "https://api.open-meteo.com/v1/forecast",
-        params: params
-      }
-    );
+    const response = await axios({
+      method: "get",
+      url: "https://api.open-meteo.com/v1/forecast",
+      params: params,
+      timeout: 10000
+    });
     res.json(response.data);
   } catch (error) {
-    console.error("Error fetching forecast:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    console.error("Error fetching forecast:", error.message);
+    res.status(500).json({ error: "Weather service temporarily unavailable" });
   }
 });
 

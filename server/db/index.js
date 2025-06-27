@@ -130,6 +130,27 @@ router.post("/savetrip", async (req, res) => {
   }
 });
 
+router.post("/deletetrip", async (req, res) => {
+  try {
+    const { email, tripId } = req.body;
+
+    if (!email || !tripId) {
+      return res.status(400).json({ error: "Email and tripId are required" });
+    }
+
+    const trip = await Trip.findOneAndDelete({ _id: tripId, email });
+    if (!trip) {
+      return res.status(404).json({ error: "Trip not found" });
+    }
+
+    res.status(200).json({ message: "Trip deleted successfully" });
+
+  } catch (error) {
+    console.error("Error in deletetrip route:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 router.get("/gettrips", async (req, res) => {
   try {
     const { email, tripId } = req.query;
