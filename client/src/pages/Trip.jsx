@@ -1,4 +1,4 @@
-import Nav from '../components/nav';
+import Nav from '../components/Nav';
 import ImageSlider from '../components/ImageSlider';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -35,6 +35,9 @@ const Trip = () => {
 
   useEffect(() => {
     const fetchPlaceDetails = async () => {
+      if (!placeId) {
+        return;
+      }
       try {
         const response = await fetch(`http://localhost:3400/api/place?id=${placeId}`);
         const placeDetails = await response.json();
@@ -150,6 +153,50 @@ const Trip = () => {
     }
   };
 
+  async function handleSave(e) {
+    e.preventDefault();
+    const token = localStorage.getItem('token');
+    
+    const checkTokenResponse = await fetch(`http://localhost:3400/api/db/checktoken?token=${token}`);
+    const checkTokenData = await checkTokenResponse.json();
+    if (checkTokenData.error) {
+      console.error("Token check failed:", checkTokenData.error);
+      return;
+    }
+    const email = checkTokenData.email;
+
+    let imageBase64 = null;
+    if (placePhotos.length > 0) {
+      const response = await fetch(placePhotos[Math.floor(Math.random() * placePhotos.length)]);
+      const blob = await response.blob();
+      const reader = new FileReader();
+      imageBase64 = await new Promise(resolve => {
+        reader.onload = () => resolve(reader.result);
+        reader.readAsDataURL(blob);
+      });
+    }
+
+    const tripData = {
+      placeId: placeId,
+      name: placeDetails.formattedAddress,
+      bestTime: bestTime,
+      image: imageBase64
+    };
+    const response = await fetch('http://localhost:3400/api/db/savetrip', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, tripData }),
+    });
+    const data = await response.json();
+    if (data.error) {
+      console.error("Error saving trip:", data.error);
+      return;
+    }
+    navigate('/trips');
+  }
+
   return (
     <div className={`bg-[#214a68] min-h-screen`}>
       <Nav currentPage='Search' className='bg-cyan-100/70' />
@@ -222,6 +269,7 @@ const Trip = () => {
                       <div>
                         <button 
                           className='mt-4 bg-blue-500 text-white md:text-lg px-5 py-2 rounded-xl hover:bg-blue-600'
+                          onClick={handleSave}
                         >
                           Save
                         </button>

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase';
-import Nav from '../components/nav';
+import Nav from '../components/Nav';
 import { Link } from 'react-router-dom';
 import { LoginOverlayClouds, LoginOverlayAirplane } from '../components/LoginOverlay';
 import { useNavigate } from 'react-router-dom';

@@ -64,11 +64,11 @@ router.post("/login", async (req, res) => {
       return res.status(401).json({ error: "Invalid email or password" });
     }
 
-    const token = await UserToken.findOne({ email });
-    if (token) {
+    const existingToken = await UserToken.findOne({ email });
+    if (existingToken) {
       const expiry = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000); // 90 days
       await UserToken.updateOne({ email }, { expiry });
-      res.status(200).json({ message: "Login successful", token, expiry });
+      res.status(200).json({ message: "Login successful", token: existingToken.token, expiry });
 
     }
     else {
@@ -83,7 +83,33 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.put("/savetrip", async (req, res) => {
+router.get("/checktoken", async (req, res) => {
+  try {
+    const { token } = req.query;
+
+    if (!token) {
+      return res.status(400).json({ error: "Token is required" });
+    }
+
+    const userToken = await UserToken.findOne({ token });
+    if (!userToken) {
+      return res.status(401).json({ error: "Invalid token" });
+    }
+
+    const currentTime = new Date();
+    if (userToken.expiry < currentTime) {
+      return res.status(401).json({ error: "Token expired" });
+    }
+
+    res.status(200).json({ message: "Token is valid", email: userToken.email });
+
+  } catch (error) {
+    console.error("Error in checktoken route:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+router.post("/savetrip", async (req, res) => {
   try {
     const { email, tripData } = req.body;
 
