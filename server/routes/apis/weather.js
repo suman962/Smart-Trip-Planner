@@ -93,10 +93,11 @@ router.post("/weatherbesttime", async (req, res) => {
     and then combine all these to find the best time to visit.
     And at last, try to think comparing human visit and comfort level.
     Say me the answer in upcoming ${time} format within ${toFind} days based on the forecast and history data.
-    if upcoming time is day, then say me day to visit in upcoming ${toFind} days.
-    if upcoming time is week, then say me week to visit in upcoming ${toFind} days.
-    if upcoming time is bi-week, then say me bi-week to visit in upcoming ${toFind} days.
-    if upcoming time is month, then say me month to visit in upcoming ${toFind} days.
+    if forecast is not available upto that say, then use history data and analyze it.
+    if upcoming time is day, then say me day to visit in upcoming ${toFind} days like example. next Monday.
+    if upcoming time is week, then say me week to visit in upcoming ${toFind} days like example. next to next week or after 3 weeks.
+    if upcoming time is bi-week, then say me bi-week to visit in upcoming ${toFind} days like example. same as week, but for 2 weeks.
+    if upcoming time is month, then say me month to visit in upcoming ${toFind} days like example. next month or any month over all year which is best.
     Don't Say anything else, just give me the answer in a single word or a phrase for a ${time}.
     `;
 

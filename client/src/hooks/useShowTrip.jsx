@@ -134,7 +134,7 @@ export function useShowTrip(placeId) {
 
   const TripHtml = !placeId ? null : (
     <div className="flex flex-col items-center">
-      <h1 className="text-3xl lg:text-4xl text-white my-4 p-2">
+      <h1 className="text-3xl lg:text-4xl text-white my-4 p-2 text-shadow-lg/50">
         {placeDetails ? placeDetails.formattedAddress : 'Loading...'}
       </h1>
       
