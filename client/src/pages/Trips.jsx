@@ -71,14 +71,14 @@ const Trips = () => {
 
   return (
     <div 
-      className="h-screen bg-cover bg-center bg-no-repeat bg-fixed flex flex-col"
+      className="min-h-screen bg-cover bg-center bg-no-repeat bg-fixed flex flex-col"
       style={{ backgroundImage: "url('./assets/trips.png')" }}
     >
       <Nav currentPage='Trips'/>
       <div>
         {
           tripIdPresent ? (
-            <div className="flex flex-col items-center justify-center h-full">
+            <div className="flex flex-col items-center justify-center min-h-screen">
               {trip && TripHtml}
               {weatherHistory && (
                 <div className="bg-slate-500/30 text-gray-100 backdrop-blur-md border border-white/20 p-3 rounded-lg shadow-md w-full max-w-md text-center">
@@ -106,7 +106,7 @@ const Trips = () => {
                                 className="object-cover rounded-lg size-22"
                               />
                             </div>
-                            <div className=''>
+                            <div className='text-shadow-lg/75'>
                               <h2 className="text-lg font-semibold">{t.name}</h2>
                               <p className="text-sm text-gray-400">Saved on: {new Date(t.createdAt).toLocaleDateString()}</p>
                             </div>
