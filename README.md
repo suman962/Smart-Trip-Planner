@@ -1,11 +1,12 @@
-# 🧳 The Smart Trip Planner
+# Smart Trip Planner 🌍
 
-> Plan your perfect trip with intelligent recommendations and seamless organization
+AI-powered travel planning app that helps you find the best destinations and timing for your trips.
 
-## 📋 Overview
+## What it does
+- Search places with smart autocomplete
+- Get AI travel recommendations 
+- Check weather data to find the best time to visit
+- Save and manage your planned trips
+- Mobile-friendly design
 
-The Smart Trip Planner is an intelligent travel planning application that helps you create well-organized, efficient, and memorable trips. Say goodbye to unpredictable travel experiences and hello to smart, data-driven trip planning.
-
----
-
-**Ready to plan your next adventure? Start using The Smart Trip Planner today!** 🌟
+Built with React, Node.js, MongoDB and Google Places API.
